@@ -1,0 +1,193 @@
+/*
+ * ---------------------------------------------------
+ *                ESTRUCTURAS DE DATOS
+ * ---------------------------------------------------
+ *              Facultad de Informática
+ *         Universidad Complutense de Madrid
+ * ---------------------------------------------------
+ */
+
+ /*
+  Introduce aquí los nombres de los componentes del grupo:
+
+  Componente 1: Alejandro Valencia Blancas
+  Componente 2: Juan Embid Sánchez
+  */
+
+#include <iostream>
+#include <cassert>
+#include <fstream>
+#include <vector>
+
+using namespace std;
+
+const int MAX_ELEMS = 2000;
+
+
+class Multiconjunto {
+public:
+    // Implementa las operaciones necesarias.
+    // No olvides el coste!
+
+    bool pertenece(int elem) {
+        if (buscar(elem, 0, num_elems))
+            return true;
+
+        return false;
+    }
+
+    void anyadir(int elem) {
+        if (pertenece(elem)) {
+            for (int i = 0; i < num_elems; i++) {
+                if (elems[i].valor == elem)
+                    elems[i].multiplicidad++;
+            }
+        }
+        else {
+            if (num_elems == 0) {
+                elems[0].multiplicidad++;
+                elems[0].valor = elem;
+            }
+            /*
+            int k = 0;
+            bool insertado = false;
+            while (k < num_elems && !insertado) {
+                if (elem > elems[k].valor) {
+                    k++;
+                }
+                else if (elem < elems[k].valor) {
+                    for (int i = num_elems - 1; i > k; i--)
+                        elems[i + 1] = elems[i];
+                    elems[k].valor = elem;
+                    elems[k].multiplicidad;
+                    insertado = true;
+            }
+             */
+            bool ok = true, ok2 = false;
+            for (int k = 0; k <= num_elems && !ok2; k++) {
+                if (elem > elems[k].valor && k !=num_elems) {
+                    ok = false;
+                }
+                else if (elem < elems[k].valor || k == num_elems){ 
+                    ok2 = true; }
+                for (int i = num_elems-1; i >= k && ok; i--) {
+                    elems[i + 1] = elems[i];
+                    }
+                ok = true;
+                
+ 
+                if(ok2){
+                    elems[k].valor = elem;
+                    elems[k].multiplicidad = 1;
+                }
+            }
+            num_elems++;
+        }
+    }
+
+    void eliminar(int elem) {
+            for (int i = 0; i < num_elems; i++) {
+                if (elems[i].valor == elem) {
+                    elems[i].multiplicidad--;
+                }
+
+            }
+    }
+
+private:
+    
+    bool buscar(int elem, int inicio, int fin) {
+        int centro = (fin + inicio) / 2;
+        
+        if (fin < inicio) {
+            return false;
+        }
+
+        if (elem < elems[centro].valor) {
+            return buscar(elem, inicio, (centro - 1));
+        }
+
+        if (elem > elems[centro].valor) {
+            return buscar(elem, (centro + 1), fin);
+        }
+
+        if (elem == elems[centro].valor && elems[centro].multiplicidad > 0) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    struct Elem {
+        int valor;
+        int multiplicidad = 0;
+    };
+    Elem elems[MAX_ELEMS];
+    int num_elems = 0;
+};
+
+
+// Función que trata un caso de prueba.
+// Devuelve false si se ha leído el 0 que marca el num_elems de la entrada,
+// o true en caso contrario.
+bool tratar_caso() {
+    // Implementar
+    Multiconjunto m;
+    int aux[MAX_ELEMS];
+    int num, temp;
+    cin >> num;
+    if (num != 0) {
+        for (int i = 0; i < num; i++) {
+            cin >> temp;
+            aux[i]= temp;
+            m.anyadir(temp);
+        }
+        for (int i = 0; i < num; i++) {
+            cin >> temp;
+
+            if (temp == aux[i]) {
+                aux[i] = 1;
+                m.eliminar(temp);
+            }
+            else if (m.pertenece(temp)) {
+                aux[i] = 2;
+                m.eliminar(temp);
+            }
+            else{ aux[i] = 0; }     
+        }
+        for(int i = 0; i < num; i++) {
+            switch (aux[i])
+            {
+                case 0:
+                    cout << ".";
+                    break;
+                case 1:
+                    cout << "#";
+                    break;
+                case 2:
+                    cout << "O";
+                    break;
+            }
+        }
+        cout << "\n";
+    }
+    else  return false;
+
+    return true;
+}
+
+int main() {
+#ifndef DOMJUDGE
+    std::ifstream in("sample.in");
+    auto cinbuf = std::cin.rdbuf(in.rdbuf());
+#endif
+    while (tratar_caso()) {}
+
+#ifndef DOMJUDGE
+    std::cin.rdbuf(cinbuf);
+    // Descomentar en Windows si la consola se cierra inmediatamente
+    // system("PAUSE");
+#endif
+    return 0;
+}
