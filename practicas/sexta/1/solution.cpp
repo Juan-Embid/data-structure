@@ -138,7 +138,32 @@ bool estable_altura(const BinTree<T> &arbol) {
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares con el tipo que quieras.
-  
+  //comprobamos que la altura máxima solo se encuentra menos de dos veces
+  if(altura(arbol).second < 2)
+    return false;
+  else
+    return true;
+}
+
+//devuelva el número de nodos en la altura máxima
+template <typename T>
+//primera componente la altura
+//segunda componente cantidad de veces que sale esa altura
+pair<int, int> altura(const BinTree<T> &arbol) {
+  if(arbol.empty())
+    return {0, 0};
+  else {
+    auto [altura_iz, cant_iz] = altura(arbol.left());
+    auto [altura_der, cant_der]= altura(arbol.right());
+
+    int altura_prev = altura(arbol).first; //calcula la altura previa
+    int alt = 1 + std::max(altura_iz, altura_der);  
+
+    int cant;
+    if (alt == altura_prev) //calcula la cantidad de veces que ha aparecido esa altura
+      cant += altura(arbol).second;
+    return {alt, cant};
+  }
 }
 
 // Función para tratar un caso de prueba
