@@ -41,8 +41,7 @@ public:
       : root_node(std::make_shared<TreeNode>(nullptr, elem, nullptr)) {}
 
   BinTree(const BinTree &left, const T &elem, const BinTree &right)
-      : root_node(std::make_shared<TreeNode>(left.root_node, elem,
-                                             right.root_node)) {}
+      : root_node(std::make_shared<TreeNode>(left.root_node, elem, right.root_node)) {}
 
   bool empty() const { return root_node == nullptr; }
 
@@ -134,35 +133,31 @@ using namespace std;
 
 // No olvides el coste!
 template <typename T>
-bool estable_altura(const BinTree<T> &arbol) {
+bool estable_altura(const BinTree<T> &arbol) { //O(n) para el número de nodos del árbol
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares con el tipo que quieras.
-  //comprobamos que la altura máxima solo se encuentra menos de dos veces
-  if(altura(arbol).second < 2)
-    return false;
-  else
-    return true;
+  return altura(arbol).second;
 }
 
-//devuelva el número de nodos en la altura máxima
 template <typename T>
 //primera componente la altura
-//segunda componente cantidad de veces que sale esa altura
-pair<int, int> altura(const BinTree<T> &arbol) {
-  if(arbol.empty())
-    return {0, 0};
+//segunda componente un booleano que devuelve si es estable o no
+pair<int, bool> altura(const BinTree<T> &arbol) { //O(n_iz) + O(n_der) + K_empty + K_hojas = O(n) donde n es el número de nodos
+  if(arbol.empty()) // si está vacio su altura será 0 y si será estable en altura
+    return {0, true};
+  else if(arbol.left().empty() && arbol.right().empty()) // si es una hoja tendrá altura 1 y no será estable en altura
+    return {1, false};
   else {
-    auto [altura_iz, cant_iz] = altura(arbol.left());
-    auto [altura_der, cant_der]= altura(arbol.right());
-
-    int altura_prev = altura(arbol).first; //calcula la altura previa
+    auto [altura_iz, bool_iz] = altura(arbol.left());
+    auto [altura_der, bool_der]= altura(arbol.right());
     int alt = 1 + std::max(altura_iz, altura_der);  
-
-    int cant;
-    if (alt == altura_prev) //calcula la cantidad de veces que ha aparecido esa altura
-      cant += altura(arbol).second;
-    return {alt, cant};
+    if (altura_der == altura_iz) //significa que si hay dos alturas iguales será estable en altura para esa altura
+      return{alt, true};
+    else if(altura_der < altura_iz)
+      return{altura_iz + 1, bool_iz};
+    else 
+      return{altura_der + 1, bool_der};
   }
 }
 
