@@ -21,8 +21,8 @@
 /*
   Introduce aquí los nombres de los componentes del grupo:
   
-  Componente 1:
-  Componente 2:
+  Componente 1: Juan Embid Sánchez
+  Componente 2: Alejandro Valencia Blancas
 */
 //@ </answer>
 
