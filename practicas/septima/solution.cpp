@@ -21,8 +21,8 @@
 /*
   Introduce aquí los nombres de los componentes del grupo:
   
-  Componente 1:
-  Componente 2:
+  Componente 1: Alejandro Valencia Blancas
+  Componente 2: Juan Embid Sánchez
 */
 //@ </answer>
 
@@ -30,10 +30,18 @@
 #include <cassert>
 #include <fstream>
 #include <memory>
+#include <queue>
 #include <utility>
+#include <limits>
 #include <tuple>
 
+
 template <class T> class BinTree {
+
+private:
+  struct TreeNode;
+  using NodePointer = std::shared_ptr<TreeNode>;
+
 public:
   BinTree() : root_node(nullptr) {}
 
@@ -67,15 +75,19 @@ public:
 
   void display(std::ostream &out) const { display_node(root_node, out); }
 
+  template <typename U> void preorder(U func) const {
+    preorder(root_node, func);
+  }
+
+  template <typename U> void inorder(U func) const { inorder(root_node, func); }
+
+  template <typename U> void postorder(U func) const {
+    postorder(root_node, func);
+  }
+
+  template <typename U> void levelorder(U func) const;
+
 private:
-  // Las definiciones de TreeNode y NodePointer dependen recursivamente
-  // la una de la otra. Por eso declaro 'struct TreeNode;' antes de NodePointer
-  // para que el compilador sepa, cuando analice la definición de NodePointer,
-  // que TreeNode va a ser definida más adelante.
-
-  struct TreeNode;
-  using NodePointer = std::shared_ptr<TreeNode>;
-
   struct TreeNode {
     TreeNode(const NodePointer &left, const T &elem, const NodePointer &right)
         : elem(elem), left(left), right(right) {}
@@ -97,7 +109,63 @@ private:
       out << ")";
     }
   }
+
+  template <typename U> static void preorder(const NodePointer &node, U func);
+
+  template <typename U> static void inorder(const NodePointer &node, U func);
+
+  template <typename U> static void postorder(const NodePointer &node, U func);
 };
+
+template <typename T>
+template <typename U>
+void BinTree<T>::preorder(const NodePointer &node, U func) {
+  if (node != nullptr) {
+    func(node->elem);
+    preorder(node->left, func);
+    preorder(node->right, func);
+  }
+}
+
+template <typename T>
+template <typename U>
+void BinTree<T>::inorder(const NodePointer &node, U func) {
+  if (node != nullptr) {
+    inorder(node->left, func);
+    func(node->elem);
+    inorder(node->right, func);
+  }
+}
+
+template <typename T>
+template <typename U>
+void BinTree<T>::postorder(const NodePointer &node, U func) {
+  if (node != nullptr) {
+    postorder(node->left, func);
+    postorder(node->right, func);
+    func(node->elem);
+  }
+}
+
+template <typename T>
+template <typename U>
+void BinTree<T>::levelorder(U func) const {
+  std::queue<NodePointer> pending;
+  if (root_node != nullptr) {
+    pending.push(root_node);
+  }
+  while (!pending.empty()) {
+    NodePointer current = pending.front();
+    pending.pop();
+    func(current->elem);
+    if (current->left != nullptr) {
+      pending.push(current->left);
+    }
+    if (current->right != nullptr) {
+      pending.push(current->right);
+    }
+  }
+}
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const BinTree<T> &tree) {
@@ -130,46 +198,24 @@ using namespace std;
 // Modificar a partir de aquí
 // --------------------------------------------------------------
 
-
 // No olvides el coste!
-template <typename T>
-bool estable_altura(const BinTree<T>& arbol) { //O(n) para el número de nodos del árbol
+int maxima_diferencia(const BinTree<int> &t) {
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
-  // funciones auxiliares con el tipo que quieras.
-    return (get<0>(equilibrado_estable(arbol)) && get<1>(equilibrado_estable(arbol)));
+  // funciones auxiliares recursivas, siempre que tengan
+  // un único parámetro de entrada (de tipo const BinTree<int> &)
+  int prev = 0, max = 0;
+  //hacer variable local que guarde el valor del nodo anterior
+  t.preorder([&prev, &max](int x) { prev -= x; });
+/*   auto maximoValor = maxima_diferencia(t);
+ */  return 1;
 }
 
-template <typename T>
-//primera componente si es estable en equilibrio
-//segunda componente si es estable en altura
-//tercera componente la altura
-tuple<bool, bool, int> equilibrado_estable(const BinTree<T>& arbol) {
-  if(arbol.empty()) // si está vacio su altura será 0 y si será estable en altura
-    return {true, true, 0};
-  else if(arbol.left().empty() && arbol.right().empty()) // si es una hoja tendrá altura 1 y no será estable en altura
-    return {false, false, 1};
-  else {
-    auto [equi_estable_iz, alt_estable_iz, altura_iz] = equilibrado_estable(arbol.left());
-    auto [equi_estable_der, alt_estable_der, altura_der]= equilibrado_estable(arbol.right());
-    int alt = 1 + std::max(altura_iz, altura_der);  
-    //ver si hijos son estables equilibrados, si lo son vemos si iz tiene altura menor estricto. solo falta ver si es la altura maxima o algo asi y ver si es estable
-    if (altura_der == altura_iz) //significa que si hay dos alturas iguales será estable en altura para esa altura
-      return{true, true, alt};
-    else if(altura_der < altura_iz)
-      return{equi_estable_iz, alt_estable_iz, alt};
-    else 
-      return{equi_estable_der, alt_estable_der, alt};
-  }
-}
-
-
-// Función que trata un caso de prueba
+// Función para tratar un caso de prueba
 void tratar_caso() {
   BinTree<int> t = read_tree<int>(cin);
-  cout << (estable_altura(t) ? "SI" : "NO") << "\n";
+  cout << maxima_diferencia(t) << "\n";
 }
-
 
 //---------------------------------------------------------------
 // No modificar por debajo de esta línea
