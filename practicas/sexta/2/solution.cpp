@@ -137,28 +137,30 @@ bool estable_altura(const BinTree<T>& arbol) { //O(n) para el número de nodos d
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares con el tipo que quieras.
-    return (std::abs(altura(arbol).first - altura(arbol).second) <= 1);
+    return (get<0>(equilibrado_estable(arbol)) && get<1>(equilibrado_estable(arbol)));
 }
 
 template <typename T>
-//primera componente la altura maxima
-//segunda componente la altura minima
-pair<int, int> altura(const BinTree<T>& arbol) {
-    if (arbol.empty()) // si está vacío tanto su alt max como su alt min será 0
-        return {0, 0};
-/*     else if (arbol.left().empty() && arbol.right().empty()) // si no está vacio pero no tiene hijos, entonces la altura min y max es 1
-        return {1, 1}; */
-    else {
-        auto [altura_max_iz, altura_min_iz] = altura(arbol.left());
-        auto [altura_max_der, altura_min_der] = altura(arbol.right());
-        int alt_max = 1 + std::max(altura_max_iz, altura_max_der);
-        int alt_min = 1 + std::min(altura_min_iz, altura_min_der);
-        if(arbol.left().empty() || arbol.right().empty())
-          return {alt_max, 1};
-        return{alt_max, alt_min};
-/*         if (arbol.left().empty() ||arbol.right().empty()) 
-          return {alt_max, 0}; */
-    }
+//primera componente si es estable en equilibrio
+//segunda componente si es estable en altura
+//tercera componente la altura
+tuple<bool, bool, int> equilibrado_estable(const BinTree<T>& arbol) {
+  if(arbol.empty()) // si está vacio su altura será 0 y si será estable en altura
+    return {true, true, 0};
+  else if(arbol.left().empty() && arbol.right().empty()) // si es una hoja tendrá altura 1 y no será estable en altura
+    return {false, false, 1};
+  else {
+    auto [equi_estable_iz, alt_estable_iz, altura_iz] = equilibrado_estable(arbol.left());
+    auto [equi_estable_der, alt_estable_der, altura_der]= equilibrado_estable(arbol.right());
+    int alt = 1 + std::max(altura_iz, altura_der);  
+
+    if (altura_der == altura_iz) //significa que si hay dos alturas iguales será estable en altura para esa altura
+      return{true, true, alt};
+    else if(altura_der < altura_iz)
+      return{equi_estable_iz, alt_estable_iz, alt};
+    else 
+      return{equi_estable_der, alt_estable_der, alt};
+  }
 }
 
 
