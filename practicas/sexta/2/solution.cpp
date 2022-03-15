@@ -131,19 +131,41 @@ using namespace std;
 // --------------------------------------------------------------
 
 
-// ¡No olvides el coste!
+// No olvides el coste!
 template <typename T>
-bool estable(const BinTree<T> &arbol) {
-  // Implementa aquí la función pedida. No puedes
-  // modificar la cabecera, pero puedes apoyarte en funciones
-  // auxiliares, si necesitas devolver más de un resultado.
+bool estable_altura(const BinTree<T>& arbol) { //O(n) para el número de nodos del árbol
+  // Implementa aquí la función. No puedes modificar el tipo
+  // de entrada ni de salida. No obstante, puedes apoyarte en
+  // funciones auxiliares con el tipo que quieras.
+    return (std::abs(altura(arbol).first - altura(arbol).second) <= 1);
+}
+
+template <typename T>
+//primera componente la altura maxima
+//segunda componente la altura minima
+pair<int, int> altura(const BinTree<T>& arbol) {
+    if (arbol.empty()) // si está vacío tanto su alt max como su alt min será 0
+        return {0, 0};
+/*     else if (arbol.left().empty() && arbol.right().empty()) // si no está vacio pero no tiene hijos, entonces la altura min y max es 1
+        return {1, 1}; */
+    else {
+        auto [altura_max_iz, altura_min_iz] = altura(arbol.left());
+        auto [altura_max_der, altura_min_der] = altura(arbol.right());
+        int alt_max = 1 + std::max(altura_max_iz, altura_max_der);
+        int alt_min = 1 + std::min(altura_min_iz, altura_min_der);
+        if(arbol.left().empty() || arbol.right().empty())
+          return {alt_max, 1};
+        return{alt_max, alt_min};
+/*         if (arbol.left().empty() ||arbol.right().empty()) 
+          return {alt_max, 0}; */
+    }
 }
 
 
 // Función que trata un caso de prueba
 void tratar_caso() {
   BinTree<int> t = read_tree<int>(cin);
-  cout << (estable(t) ? "SI" : "NO") << "\n";
+  cout << (estable_altura(t) ? "SI" : "NO") << "\n";
 }
 
 
