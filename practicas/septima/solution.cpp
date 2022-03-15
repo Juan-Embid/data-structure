@@ -205,10 +205,12 @@ int maxima_diferencia(const BinTree<int> &t) {
   // funciones auxiliares recursivas, siempre que tengan
   // un único parámetro de entrada (de tipo const BinTree<int> &)
   int prev = 0, max = 0;
-  //hacer variable local que guarde el valor del nodo anterior
-  t.preorder([&prev, &max](int x) { prev -= x; });
-/*   auto maximoValor = maxima_diferencia(t);
- */  return 1;
+  bool ok = false;
+  // hacer variable local que guarde el valor del nodo anterior
+  //t.preorder([&prev, &max](int x) {max = std::max(max, std::abs(prev -= x));});
+  t.preorder([&prev, &max, &ok](int x) { if(ok) {max = std::max(max, std::abs(prev -= x)); prev = x;} else{ prev = x; ok = true;}});
+
+ return max;
 }
 
 // Función para tratar un caso de prueba
