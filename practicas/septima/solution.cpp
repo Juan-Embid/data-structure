@@ -199,7 +199,7 @@ using namespace std;
 // --------------------------------------------------------------
 
 // No olvides el coste!
-int maxima_diferencia(const BinTree<int> &t) {
+int maxima_diferencia(const BinTree<int> &t) { //O(n) donde n es el número de nodos
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares recursivas, siempre que tengan
