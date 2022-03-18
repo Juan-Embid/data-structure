@@ -204,13 +204,19 @@ int maxima_diferencia(const BinTree<int> &t) {
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares recursivas, siempre que tengan
   // un único parámetro de entrada (de tipo const BinTree<int> &)
+  return recursive_diff(t).second;
+}
+
+pair<int, bool> recursive_diff(const BinTree<int> & tree) {
   int prev = 0, max = 0;
   bool ok = false;
-  // hacer variable local que guarde el valor del nodo anterior
-  //t.preorder([&prev, &max](int x) {max = std::max(max, std::abs(prev -= x));});
-  t.preorder([&prev, &max, &ok](int x) { if(ok) {max = std::max(max, std::abs(prev -= x)); prev = x;} else{ prev = x; ok = true;}});
-
- return max;
+  if(tree.empty())
+    return{0, false};
+  else{
+    //hay que quitar la funcion de preorder
+    tree.preorder([&prev, &max, &ok](int x) { if(ok) {max = std::max(max, std::abs(prev -= x)); prev = x;} else{ prev = x; ok = true;}});
+    return {,};
+  }
 }
 
 // Función para tratar un caso de prueba
