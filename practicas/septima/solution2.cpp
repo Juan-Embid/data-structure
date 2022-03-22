@@ -34,6 +34,7 @@
 #include <utility>
 #include <limits>
 #include <tuple>
+#include <stdlib.h>
 
 
 template <class T> class BinTree {
@@ -198,26 +199,49 @@ using namespace std;
 // Modificar a partir de aquí
 // --------------------------------------------------------------
 
+//donde el primer elemento es el ultimo elemento recorrido en preorden
+//donde el segundo elemento es el mayor elemento 
+pair<int, int> recursive_diff(const BinTree<int> & tree) {
+  if(tree.empty())
+    return {0, 0};
+  else if(tree.left().empty() && tree.right().empty())
+    return {tree.root(), 0};
+  else {
+    if(tree.left().empty()){
+      auto [last, max_der] = recursive_diff(tree.right());
+      int absolute_der = std::abs(tree.root() - tree.right().root());
+      int max_D = std::max(max_der, absolute_der);
+      return {last, max_D};
+    }
+    else if (tree.right().empty()){
+      auto [last, max_izq] = recursive_diff(tree.left());
+      int absolute_iz = std::abs(tree.root() - tree.left().root());
+      int max_I = std::max(max_izq, absolute_iz);
+      return {last, max_I};
+    }
+    else{
+      auto [prev_iz, max_iz] = recursive_diff(tree.left());
+      auto [prev_der, max_der] = recursive_diff(tree.right());
+      int mayor = std::max(max_iz, max_der);
+      int absolute_iz = std::abs(prev_iz - tree.right().root());
+      int absolute_der = std::abs(tree.root() - tree.left().root());
+      mayor = std::max(mayor, absolute_iz);
+      mayor = std::max(mayor, absolute_der);
+      return {prev_der, mayor};
+    }
+  }
+}
+
 // No olvides el coste!
 int maxima_diferencia(const BinTree<int> &t) {
   // Implementa aquí la función. No puedes modificar el tipo
   // de entrada ni de salida. No obstante, puedes apoyarte en
   // funciones auxiliares recursivas, siempre que tengan
   // un único parámetro de entrada (de tipo const BinTree<int> &)
-  return recursive_diff(t).second;
+  return get<1>(recursive_diff(t));
 }
 
-pair<int, bool> recursive_diff(const BinTree<int> & tree) {
-  int prev = 0, max = 0;
-  bool ok = false;
-  if(tree.empty())
-    return{0, false};
-  else{
-    //hay que quitar la funcion de preorder
-    tree.preorder([&prev, &max, &ok](int x) { if(ok) {max = std::max(max, std::abs(prev -= x)); prev = x;} else{ prev = x; ok = true;}});
-    return {,};
-  }
-}
+
 
 // Función para tratar un caso de prueba
 void tratar_caso() {
