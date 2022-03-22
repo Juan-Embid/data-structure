@@ -200,8 +200,8 @@ using namespace std;
 // --------------------------------------------------------------
 
 //donde el primer elemento es el ultimo elemento recorrido en preorden
-//donde el segundo elemento es el mayor elemento 
-pair<int, int> recursive_diff(const BinTree<int> & tree) {
+//donde el segundo elemento es la mayor diferencia 
+pair<int, int> recursive_diff(const BinTree<int> & tree) { // O(n) para el número de nodos en el árbol
   if(tree.empty())
     return {0, 0};
   else if(tree.left().empty() && tree.right().empty())
