@@ -2,27 +2,27 @@
  * ---------------------------------------------------
  *                ESTRUCTURAS DE DATOS
  * ---------------------------------------------------
- *              Facultad de Informática
+ *              Facultad de Informï¿½tica
  *         Universidad Complutense de Madrid
  * ---------------------------------------------------
  */
 
  /*
-* MUY IMPORTANTE: Para realizar este ejercicio solo podéis
-* modificar el código contenido entre las etiquetas <answer>
-* y </answer>. Toda modificación fuera de esas etiquetas está
-* prohibida, pues no se tendrá en cuenta para la corrección.
+* MUY IMPORTANTE: Para realizar este ejercicio solo podï¿½is
+* modificar el cï¿½digo contenido entre las etiquetas <answer>
+* y </answer>. Toda modificaciï¿½n fuera de esas etiquetas estï¿½
+* prohibida, pues no se tendrï¿½ en cuenta para la correcciï¿½n.
 *
-* Tampoco esta permitido modificar las líneas que contienen
+* Tampoco esta permitido modificar las lï¿½neas que contienen
 * las etiquetas <answer> y </answer>, obviamente :-)
 */
 
 //@ <answer>
 /*
-  Introduce aquí los nombres de los componentes del grupo:
+  Introduce aquï¿½ los nombres de los componentes del grupo:
 
   Componente 1: Alejandro Valencia Blancas
-  Componente 2: Juan Embid Sánchez
+  Componente 2: Juan Embid Sï¿½nchez
 */
 //@ </answer>
 
@@ -37,7 +37,7 @@
 
 
 /*
-  Implementación de la clase BinTree para representar árboles binarios.
+  Implementaciï¿½n de la clase BinTree para representar ï¿½rboles binarios.
  */
 
 template<class T>
@@ -82,8 +82,8 @@ public:
 private:
     // Las definiciones de TreeNode y NodePointer dependen recursivamente
     // la una de la otra. Por eso declaro 'struct TreeNode;' antes de NodePointer
-    // para que el compilador sepa, cuando analice la definición de NodePointer,
-    // que TreeNode va a ser definida más adelante.
+    // para que el compilador sepa, cuando analice la definiciï¿½n de NodePointer,
+    // que TreeNode va a ser definida mï¿½s adelante.
 
     struct TreeNode;
     using NodePointer = std::shared_ptr<TreeNode>;
@@ -113,8 +113,8 @@ private:
 };
 
 /*
- * Operador << para mostrar un árbol por pantalla. No es necesario hacer esto
- * en la práctica, pero os lo dejo por si queréis depurar.
+ * Operador << para mostrar un ï¿½rbol por pantalla. No es necesario hacer esto
+ * en la prï¿½ctica, pero os lo dejo por si querï¿½is depurar.
  */
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const BinTree<T>& tree) {
@@ -124,12 +124,12 @@ std::ostream& operator<<(std::ostream& out, const BinTree<T>& tree) {
 
 
 /*
- * Función para leer un árbol binario de la entrada. El formato es el siguiente:
+ * Funciï¿½n para leer un ï¿½rbol binario de la entrada. El formato es el siguiente:
  *
- *  Árbol vacío: .
- *  Árbol no vacío: (i x r)  donde i es la representación del hijo izquierdo
- *                                 x es la raíz
- *                                 r es la representación del hijo derecho
+ *  ï¿½rbol vacï¿½o: .
+ *  ï¿½rbol no vacï¿½o: (i x r)  donde i es la representaciï¿½n del hijo izquierdo
+ *                                 x es la raï¿½z
+ *                                 r es la representaciï¿½n del hijo derecho
  */
 template<typename T>
 BinTree<T> read_tree(std::istream& in) {
@@ -152,7 +152,7 @@ BinTree<T> read_tree(std::istream& in) {
 }
 
 /*
- * Clase que implementa diccionarios mediante árboles binarios de búsqueda
+ * Clase que implementa diccionarios mediante ï¿½rboles binarios de bï¿½squeda
  */
 
 template <typename K, typename V, typename ComparatorFunction = std::less<K>>
@@ -456,7 +456,7 @@ std::ostream& operator<<(std::ostream& out, const MapTree<K, V>& map) {
 }
 
 /*
- * Analizador léxico del lenguaje
+ * Analizador lï¿½xico del lenguaje
  */
 
 
@@ -529,7 +529,7 @@ private:
 };
 
 /*
- * Analizador sintáctico del lenguaje
+ * Analizador sintï¿½ctico del lenguaje
  */
 
 
@@ -620,7 +620,7 @@ private:
 };
 
 /*
- * Función que lee una sentencia y devuelve su árbol sintáctico.
+ * Funciï¿½n que lee una sentencia y devuelve su ï¿½rbol sintï¿½ctico.
  */
 
 BinTree<std::string> parse(std::istream& in) {
@@ -630,10 +630,10 @@ BinTree<std::string> parse(std::istream& in) {
 using namespace std;
 
 /* ======================================================================
- * Escribe tu solución entre las etiquetas "answer" que se muestran a
- * continuación.
+ * Escribe tu soluciï¿½n entre las etiquetas "answer" que se muestran a
+ * continuaciï¿½n.
  *
- * No es necesario añadir ni modificar ningún método de las clases
+ * No es necesario aï¿½adir ni modificar ningï¿½n mï¿½todo de las clases
  * anteriores, pero puedes implementar las funciones auxiliares
  * que necesites.
  * ====================================================================== */
@@ -649,7 +649,7 @@ bool isvariable(string v) {
     return !isdigit(v[0]);
 }
 
-int recursive(MapTree<string, int>& r, BinTree<string> const& a) {
+int recursive(MapTree<string, int>& r, BinTree<string> const& a) { // O(n) donde n es el nÃºmero de nodos
     int left, right;
     string suma = "+", resta = "-", mul = "*";
     if (!isOperator(a.root())) {
