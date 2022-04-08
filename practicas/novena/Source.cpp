@@ -649,7 +649,7 @@ bool isvariable(string v) {
     return !isdigit(v[0]);
 }
 
-int recursive(MapTree<string, int>& r, BinTree<string> const& a) { // O(n) donde n es el número de nodos
+int recursive(MapTree<string, int>& r, BinTree<string> const& a) { // O(n)
     int left, right;
     string suma = "+", resta = "-", mul = "*";
     if (!isOperator(a.root())) {
