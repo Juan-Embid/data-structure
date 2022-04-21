@@ -36,45 +36,54 @@ using namespace std;
 // o false si no se ha procesado porque se ha encontrado la
 // marca de fin de entrada
 
-bool tratar_caso() {
+bool tratar_caso() { // El coste es O(log n) * (ship * players + shots * range.size())
 	multimap<string, string> map;
 	unordered_map<string,  int> invmap;
 	int players, ships, shots;
-	string name, coord, attackname, attack;
-	std::map<string, string>::iterator it;
+	string name, coord, attackname, attack, print;
+	std::map<string, string>::iterator it, aux;
 	bool ok = false;
 	cin >> players;
 	cin >> ships;
-	
+	if (players == 0 && ships == 0)
+		return false;
 	for (int j = 0; j < players; j++) {
 		cin >> name;
 		invmap[name] = ships;
 		for (int i = 0; i < ships; i++) {
 			cin >> coord;
-			map.insert(coord, name);
+			map.insert(pair<string, string>(coord, name));
 		}
 	}
 	cin >> shots;
-	it = map.find(coord);
-	for (int i = 0; i < shots; i++) {
+	for (int j = 0; j < shots; j++) {
+		print = "";
 		cin >> attackname;
 		cin >> attack;
 		auto range = map.equal_range(attack);
-		for (auto i = range.first; i != range.second; ++i) {
-			ok = true;
+		auto i = range.first;
+		while(i != range.second) {
+			aux = i;
+			++aux;
 			if (i->second != attackname) {
+				ok = true;
 				auto it2 = invmap.find(i->second);
 				int temp = it2->second;
-				it->second = temp - 1;
+				it2->second = temp - 1;
 				map.erase(i);
-				if (it2->second > 0)
-					cout << "HUNDIDO" << endl;
-				else cout << "VENCIDO" << endl;
+				if (it2->second > 0 && print != "VENCIDO")
+					print = "HUNDIDO";
+				else print = "VENCIDO";
 			}
+			i = aux;
 		}
 		if (!ok) cout << "AGUA" << endl;
+		else
+			cout << print << endl;
+		ok = false;
 	}	
-		return false;
+	cout << "---" << endl;
+		return true;
 }
 
 
