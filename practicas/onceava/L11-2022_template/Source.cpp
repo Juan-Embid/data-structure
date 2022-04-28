@@ -81,7 +81,7 @@ public:
 		unordered_map<int, int> aux2;
 		try{
 		if (mapnames.count(nombre) == 0)
-			throw std::domain_error("Torre no existente");
+			throw std::domain_error("torre no existente");
 		else{
 			map.at(mapnames[nombre].first).erase(mapnames[nombre].second);
 			mapy.at(mapnames[nombre].second).erase(mapnames[nombre].first);
@@ -143,14 +143,15 @@ public:
 			else if (dir == Direccion::Sur) {
 				
 				auto it = map.at(mapnames.at(nombre).first).lower_bound(mapnames.at(nombre).second);
-				it--;
-				if (it == map.at(mapnames.at(nombre).first).end()) {
+				if (it == map.at(mapnames.at(nombre).first).begin()) {
 					ok = false;
 				}
 				else {
+					it--;
 					msg = it->second;
 					ok = true;
 				}
+				
 			}
 			
 			else if (dir == Direccion::Este) {
@@ -179,14 +180,16 @@ public:
 			else if (dir == Direccion::Oeste) {
 				
 				auto it = mapy.at(mapnames.at(nombre).second).lower_bound(mapnames.at(nombre).first);
-				it--;
-				if (it == mapy.at(mapnames.at(nombre).second).end()) {
+				
+				if (it == mapy.at(mapnames.at(nombre).second).begin()) {
 					ok = false;
 				}
 				else {
+					it--;
 					msg = it->second;
 					ok = true;
 				}
+				
 
 				/*
 				auto it = map.lower_bound(mapnames.at(nombre).first);
@@ -205,7 +208,7 @@ public:
 				throw std::domain_error("No hay torres en esa direccion");
 		}
 		else {
-			throw std::domain_error("Torre No Existente");
+			throw std::domain_error("Torre no existente");
 		}
 		}
 		catch (domain_error s) { msg = s.what(); }
