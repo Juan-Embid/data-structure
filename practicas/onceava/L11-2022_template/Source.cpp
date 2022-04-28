@@ -29,7 +29,7 @@
 #include <utility>
 #include <stdexcept>
 #include <unordered_map>
-
+#include <map>
 using namespace std;
 
 const int MAX = 10000;
@@ -60,39 +60,43 @@ public:
 	Desierto() { }
 
 	void anyadir_torre(const string& nombre, int x, int y) {
-		pair<int, int> aux;
-		aux = { x, y };
-		
-		auto it = mapnames.find(nombre);
-		if(it != mapnames.end())
+		try{
+		if(mapnames.count(nombre) > 0)
 			throw std::domain_error("Torre ya existente");
-		auto it2 = map.find(aux);
-		if (it2 != map.end())
+			if (map.count(x) > 0 && map.at(x).count(y) > 0)
 			throw std::domain_error("Posicion ocupada");
 		else {
-			map.insert(pair<pair<int, int>, string>(aux, nombre));
-			mapnames.insert(pair<string, pair<int, int>>(nombre, aux));
+				
+				map[x][y] = nombre;
+				mapy[y][x] = nombre;
+				mapnames[nombre] ={x, y};
 		}
-		
+		}
+		catch (domain_error s) {
+			cout << s.what() << endl;
+		}
 	}
 
 	void eliminar_torre(const string& nombre) {
-		auto it = mapnames.find("nombre");
-		if (it == mapnames.end())
+		unordered_map<int, int> aux2;
+		try{
+		if (mapnames.count(nombre) == 0)
 			throw std::domain_error("Torre no existente");
 		else{
-			pair<int, int> aux =  mapnames["nombres"];
-			map.erase(aux);
-			mapnames.erase("nombre");
+			map.at(mapnames[nombre].first).erase(mapnames[nombre].second);
+			mapy.at(mapnames[nombre].second).erase(mapnames[nombre].first);
+			mapnames.erase(nombre);
+		}
+		}
+		catch (domain_error s) {
+			cout << s.what();
 		}
 	}
 
 	pair<bool, string> torre_en_posicion(int x, int y) const {
 		pair<bool, string> result;
-		pair <int, int> aux = { x,y };
-		auto it2 = map.find(aux);
-		if (it2 != map.end()) {
-			string m = map.at(pair<int, int>(aux));
+		if ( map.count(x) > 0 && map.at(x).count(y) > 0) {
+			string m = map.at(x).at(y);
 			result = { true, m };
 		}
 		else {
@@ -102,78 +106,120 @@ public:
 	}
 
 	pair<int, int> posicion(const string& nombre) const {
-		pair<int, int> m;
-		auto it = mapnames.find(nombre);
-		if (it == mapnames.end())
+		try{
+		if (mapnames.count(nombre) == 0)
 			throw std::domain_error("Torre no existente");
-		else
+		
+		
+		else {
 			return mapnames.at(nombre);
-	}
+		}
+		}
+		catch (domain_error s) {
+			cout << s.what()<<endl;
+		}
 
+		return { -1, -1 };
+	}
+	
 	string torre_mas_cercana(const string& nombre, const Direccion& dir) const {
-		pair<int, int> aux;
-		auto it = mapnames.find(nombre);
+		string msg;
 		bool ok = false;
-		if (it != mapnames.end()) {
-			switch (dir)
-			{
-			case Direccion::Norte:
+		try{
+		if (mapnames.count(nombre) > 0) {
+			
+			if (dir == Direccion::Norte) {
 				
-					for(int i = mapnames.at(nombre).first && !ok; i < MAX; i++){
-						aux = { i, mapnames.at(nombre).second };
-						auto it2 = map.find(pair<int, int>(aux));
-						if (it2 != map.end()) {
-							ok = true;
-						}
+				auto it = map.at(mapnames.at(nombre).first).upper_bound(mapnames.at(nombre).second);
+				if (it == map.at(mapnames.at(nombre).first).end()) {
+					ok = false;
 					}
-				
-				break;
-			case Direccion::Sur:
-				
-					for (int i = mapnames.at(nombre).first && !ok; i > 0; i--) {
-						aux = { i, mapnames.at(nombre).second };
-						auto it2 = map.find(pair<int, int>(aux));
-						if (it2 != map.end()) {
-							ok = true;
-						}
+				else {
+					msg = it->second;
+					ok = true;
 				}
-				break;
-			case Direccion::Este:
-				
-					for (int i = mapnames.at(nombre).second && !ok;i < MAX; i++) {
-						aux = { mapnames.at(nombre).first ,i };
-						auto it2 = map.find(pair<int, int>(aux));
-						if (it2 != map.end()) {
-							ok = true;
-						}
-					}
-				
-				break;
-			case Direccion::Oeste:
-				
-					for (int i = mapnames.at(nombre).second && !ok; i > 0; i--) {
-						aux = { mapnames.at(nombre).first ,i};
-						auto it2 = map.find(pair<int, int>(aux));
-						if (it2 != map.end()) {
-							ok = true;
-						}
-					}
-				
-				break;
 			}
+				
+			else if (dir == Direccion::Sur) {
+				
+				auto it = map.at(mapnames.at(nombre).first).lower_bound(mapnames.at(nombre).second);
+				it--;
+				if (it == map.at(mapnames.at(nombre).first).end()) {
+					ok = false;
+				}
+				else {
+					msg = it->second;
+					ok = true;
+				}
+			}
+			
+			else if (dir == Direccion::Este) {
+
+
+				auto it = mapy.at(mapnames.at(nombre).second).upper_bound(mapnames.at(nombre).first);
+				if (it == mapy.at(mapnames.at(nombre).second).end()) {
+					ok = false;
+				}
+				else {
+					msg = it->second;
+					ok = true;
+				}
+				/*
+				auto it = map.upper_bound(mapnames.at(nombre).first);
+				while(it != map.end() && !ok){
+				if (it == map.end() || it->second.count(mapnames.at(nombre).second) == 0) {
+					ok = false;
+				}
+				else {
+					msg = it->second.at(mapnames.at(nombre).second);
+					ok = true;
+				}
+				}*/
+			}
+			else if (dir == Direccion::Oeste) {
+				
+				auto it = mapy.at(mapnames.at(nombre).second).lower_bound(mapnames.at(nombre).first);
+				it--;
+				if (it == mapy.at(mapnames.at(nombre).second).end()) {
+					ok = false;
+				}
+				else {
+					msg = it->second;
+					ok = true;
+				}
+
+				/*
+				auto it = map.lower_bound(mapnames.at(nombre).first);
+				while(it != map.begin() && !ok){
+				it--;
+				if (it == map.end() || it->second.count(mapnames.at(nombre).second) == 0) {
+					ok = false;
+				}
+				else {
+					msg = it->second.at(mapnames.at(nombre).second);
+					ok = true;
+				}
+			}*/
+			}
+			if(!ok)
+				throw std::domain_error("No hay torres en esa direccion");
 		}
 		else {
-			throw std::domain_error("No hay torres en esa direccion");
+			throw std::domain_error("Torre No Existente");
 		}
-
-		return map.at(aux);
+		}
+		catch (domain_error s) { msg = s.what(); }
+		
+		return msg;
 	}
 
 
 private:
 
-	unordered_map<pair<int, int>,string > map;
-	unordered_map<string, pair<int, int> > mapnames;
+	std::map<int, std::map<int ,string> > map;
+	std::map<int, std::map<int, string> > mapy;
+	unordered_map<string, pair<int,int>> mapnames;
+	
 	// Añade aquí los atributos que conforman la representación
 	// interna del TAD
 	//
@@ -186,7 +232,7 @@ private:
 // Devuelve true si se ha procesado el caso de prueba
 // o false si no se ha procesado porque se ha encontrado el
 // fin de fichero
-void parse(Desierto d, string const order) {
+void parse(Desierto &d, string const order) {
 	string name;
 	int x, y;
 	Direccion dir;
@@ -204,7 +250,9 @@ void parse(Desierto d, string const order) {
 	}
 	else if (order == "posicion") {
 		cin >> name;
-		d.posicion(name);
+		pair <int, int> temp = d.posicion(name);
+		if(temp.first != -1 && temp.second != -1)
+		cout << temp.first << " " << temp.second << endl;
 	}
 	else if (order == "torre_en_posicion") {
 		cin >> x;
@@ -218,23 +266,24 @@ void parse(Desierto d, string const order) {
 	else if (order == "torre_mas_cercana") {
 		cin >> name;
 		cin >> dir;
+		cout << d.torre_mas_cercana(name, dir) << endl;
 		
 	}
 
 }
 bool tratar_caso() {
+	Desierto desert;
 	string order;
-	if (std::cin)
-		return false;
 	cin >> order;
-	if (order != "FIN") {
-		Desierto ok;
-		parse(ok, order);
-	}
+	while(std::cin){
+	
+	if (order != "FIN") 
+		parse(desert, order);
 	else
 		cout << "---" << endl;
-	
-	return true;
+	cin >> order;
+	}
+	return false;
 }
 
 
@@ -249,7 +298,7 @@ int main() {
 #ifndef DOMJUDGE
 	std::cin.rdbuf(cinbuf);
 	// Descomentar si se trabaja en Windows
-	// system("PAUSE");
+	 system("PAUSE");
 #endif
 	return 0;
 }
