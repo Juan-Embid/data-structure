@@ -73,17 +73,6 @@ private:
 // o false si no se ha procesado porque se ha encontrado el
 // fin de fichero
 bool tratar_caso() {
-  // Implementar.
-}
-
-
-int main() {
-#ifndef DOMJUDGE
-  std::ifstream in("sample.in");
-  auto cinbuf = std::cin.rdbuf(in.rdbuf());
-#endif
-
-while (tratar_caso()) {
     Spitter spitter;
     string spits, operacion;
     int id;
@@ -160,6 +149,15 @@ while (tratar_caso()) {
     cout << "---" << endl;
     return true;
 }
+
+
+int main() {
+#ifndef DOMJUDGE
+  std::ifstream in("sample.in");
+  auto cinbuf = std::cin.rdbuf(in.rdbuf());
+#endif
+
+while (tratar_caso()) {}
 
 #ifndef DOMJUDGE
   std::cin.rdbuf(cinbuf);
