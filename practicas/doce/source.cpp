@@ -16,8 +16,8 @@
 /*
   Introduce aquí los nombres de los componentes del grupo:
   
-  Componente 1:
-  Componente 2:
+  Componente 1: Alejandro Valencia Blancas
+  Componente 2: Juan Embid Sánchez
 */
 
 
@@ -40,7 +40,7 @@ public:
   
   Spitter() { }
   
-  void nueva_publicacion(int id, const string &texto, const vector<string> &hashtags) {
+  void nueva_publicacion(int id, const string & texto, const vector<string> &hashtags) {
   }
   
   void borrar_publicacion(int id) {
@@ -83,7 +83,83 @@ int main() {
   auto cinbuf = std::cin.rdbuf(in.rdbuf());
 #endif
 
-  while (tratar_caso()) { }
+while (tratar_caso()) {
+    Spitter spitter;
+    string spits, operacion;
+    int id;
+
+    cin >> operacion;
+
+    if (!cin) 
+        return false; 
+
+    while (operacion != "FIN") {
+        try {
+            if (operacion == "nueva_publicacion") {
+                vector<string> hashtags; 
+                string palabra, total;
+                        
+                cin >> id;
+                getline(cin, spits);
+                getline(cin, total);
+
+                stringstream strm(total);
+                while (strm >> palabra) 
+                    hashtags.push_back(palabra);
+                spitter.nueva_publicacion(id, spits, hashtags);
+            }
+
+            if (operacion == "borrar_publicacion") {
+                cin >> id;
+                spitter.borrar_publicacion(id);
+            }
+
+            if (operacion == "mas_recientes") {
+                int cantidad;
+                vector<string> recientes;
+
+                cin >> cantidad;
+                recientes = spitter.mas_recientes(cantidad);                
+                cout << "Las " << recientes.size() << " publicaciones mas recientes:" << endl;
+               
+               for (string publicacion : recientes) 
+                    cout << publicacion << endl;
+            }
+            
+            if (operacion == "hashtags") {
+                vector<string> hasht;
+
+                cin >> id;
+                hasht = spitter.hashtags(id);
+                for (string tag : hasht) 
+                    cout << tag << " ";
+                cout << endl;
+            }
+
+            if (operacion == "anyadir_hashtag") {
+                string hasht;
+
+                cin >> id >> hasht;
+                spitter.anyadir_hashtag(id, hasht);
+            }
+
+            if (operacion == "popularidad") {
+                string hasht;
+
+                cin >> hasht;
+                cout << spitter.popularidad(hasht) << endl;
+            }
+
+        } catch (std::domain_error& exception) {
+        cout << "ERROR: " << exception.what() << endl;
+        }
+
+        cin >> operacion;
+    }
+
+    cout << "---" << endl;
+    return true;
+}
 
 #ifndef DOMJUDGE
   std::cin.rdbuf(cinbuf);
