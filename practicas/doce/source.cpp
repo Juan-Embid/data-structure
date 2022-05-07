@@ -30,7 +30,9 @@
 #include <stdexcept>
 #include <sstream>
 #include <vector>
-
+#include <list>
+#include <unordered_map>
+#include <set>
 
 using namespace std;
 
@@ -40,23 +42,71 @@ public:
   
   Spitter() { }
   
-  void nueva_publicacion(int id, const string & texto, const vector<string> &hashtags) {
+  void nueva_publicacion(int id, const string & texto, const vector<string> &hashtags) { // O(n)
+    if(pub.count(id)) // O(n)
+        throw std::domain_error("Identificador duplicado");
+
+    rec.push_front(texto); // O(1)
+    pub.insert({id,{{texto,rec.begin()},{}}}); // O(1) 
+
+    auto& has = pub[id].second;
+    for(auto hashtag : hashtags) { // O(n)
+        has.insert(hashtag);  // O(1)
+        fam[hashtag]++;
+    }
   }
   
-  void borrar_publicacion(int id) {
+  void borrar_publicacion(int id) { // O(n)
+    if(pub.count(id)) {  // O(n)
+        auto it = pub[id].first.second;
+        rec.erase(it); // O(n)
+
+        auto has = pub[id].second;
+        for(auto hashtag : has)
+            fam[hashtag]--;
+        pub.erase(id); // O(1)
+    }
   }
 
   
-  vector<string> mas_recientes(int n) const {
+  vector<string> mas_recientes(int n) const { // O(n)
+      auto it = rec.begin(); // O(1)
+      vector<string> last;
+
+      while(it != rec.end()) { // O(n)
+          last.push_back(*it); // O(1)
+          it++;
+      }
+      return last;
   }  
 
-  vector<string> hashtags(int id) const {
+  vector<string> hashtags(int id) const { // O(n)
+      if(pub.count(id) == 0) // O(n)
+        throw std::domain_error("Publicacion no existente");
+
+        auto has = pub.at(id).second;
+        vector<string> has1;
+        for(auto elem : has) // O(n)
+            has1.push_back(elem); // O(1)
+
+        return has1; 
   }
   
-  void anyadir_hashtag(int id, const string &hashtag) {
+  void anyadir_hashtag(int id, const string &hashtag) { // O(n)
+      if(pub.count(id) == 0) // O(n)
+        throw std::domain_error("Publicacion no existente");
+    
+    auto& has = pub[id].second;
+    if(has.count(hashtag) == 0) { // O(n)
+        has.insert(hashtag);  // O(log n)
+        fam[hashtag]++;
+    }
   }
   
-  int popularidad(const string &hashtag) const {
+  int popularidad(const string &hashtag) const { // O(n)
+      if(fam.count(hashtag))  // O(n)
+        return fam.at(hashtag); // O(n)
+    return 0;
   }
   
   
@@ -65,6 +115,9 @@ private:
   // interna del TAD
   //
   // También puedes añadir métodos auxiliares privados
+    list<string> rec;
+    unordered_map<int, pair<pair<string, list<string>::iterator>, set<string>>> pub;
+    unordered_map<string, int> fam;
 };
 
 
@@ -82,7 +135,7 @@ bool tratar_caso() {
     if (!cin) 
         return false; 
 
-    while (operacion != "FIN") {
+    while (operacion != "FIN") { // O((cantidad de hashtahs) * n)
         try {
             if (operacion == "nueva_publicacion") {
                 vector<string> hashtags; 
@@ -93,14 +146,14 @@ bool tratar_caso() {
                 getline(cin, total);
 
                 stringstream strm(total);
-                while (strm >> palabra) 
+                while (strm >> palabra) // O((cantidad de palabras)*n)
                     hashtags.push_back(palabra);
-                spitter.nueva_publicacion(id, spits, hashtags);
+                spitter.nueva_publicacion(id, spits, hashtags); // O(n)
             }
 
             if (operacion == "borrar_publicacion") {
                 cin >> id;
-                spitter.borrar_publicacion(id);
+                spitter.borrar_publicacion(id); // O(n)
             }
 
             if (operacion == "mas_recientes") {
@@ -108,20 +161,25 @@ bool tratar_caso() {
                 vector<string> recientes;
 
                 cin >> cantidad;
-                recientes = spitter.mas_recientes(cantidad);                
+                recientes = spitter.mas_recientes(cantidad); // O(n)         
                 cout << "Las " << recientes.size() << " publicaciones mas recientes:" << endl;
                
                for (string publicacion : recientes) 
-                    cout << publicacion << endl;
+                    cout << "  " << publicacion << endl;
             }
             
             if (operacion == "hashtags") {
                 vector<string> hasht;
+                int n = 1;
 
                 cin >> id;
-                hasht = spitter.hashtags(id);
-                for (string tag : hasht) 
-                    cout << tag << " ";
+                hasht = spitter.hashtags(id); // O(n)
+                if (hasht.size() != 0)
+                    cout << hasht[0];
+                while (hasht.size() > n) {
+                    cout << " " << hasht[n];
+                    n++;
+                }
                 cout << endl;
             }
 
@@ -129,14 +187,14 @@ bool tratar_caso() {
                 string hasht;
 
                 cin >> id >> hasht;
-                spitter.anyadir_hashtag(id, hasht);
+                spitter.anyadir_hashtag(id, hasht); // O(n)
             }
 
             if (operacion == "popularidad") {
                 string hasht;
 
                 cin >> hasht;
-                cout << spitter.popularidad(hasht) << endl;
+                cout << spitter.popularidad(hasht) << endl; // O(n)
             }
 
         } catch (std::domain_error& exception) {
