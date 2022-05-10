@@ -73,7 +73,7 @@ public:
       auto it = rec.begin(); // O(1)
       vector<string> last;
 
-      while(it != rec.end()) { // O(n)
+      while(it != rec.end() && n--) { // O(n)
           last.push_back(*it); // O(1)
           it++;
       }
